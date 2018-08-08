@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kontakt</title>
+</head>
+<body>
+    <h1>Skontaktuj się z nami</h1>
+    <label th:text="${info}">info</label>
+    <form th:action="@{/contact}" th:object="${contact}" th:method="post">
+        <label for="">Temat</label>
+        <input th:type="text" th:field="*{subject}"  placeholder="Temat wiadomości">
+        <span th:errors="*{subject}">error</span>
+        <br>
+        <label for="">Wiadomość</label>
+        <textarea th:type="text" th:field="*{message}" name="" id="" cols="30" rows="10"></textarea>
+        <span th:errors="*{message}">error</span>
+        <br>
+        <label for="">E-mail</label>
+        <input th:type="email" th:field="*{email}">
+        <span th:errors="*{email}">error</span>
+        <br>
+        <input th:type="submit" th:value="Prześlij">
+    </form>
+    <br>
+    <a href="/">strona główna</a>
+</body>
+</html>

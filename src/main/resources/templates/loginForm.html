@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formularz logowania</title>
+</head>
+<body>
+    <h1>Zaloguj się do serwisu</h1>
+    <form action="@{/login-process}" th:method="post">
+        <label>Login/email</label>
+        <input th:type="text" th:name="email">
+        <label>podaj hasło</label>
+        <input th:type="text" th:name="password">
+        <input th:type="submit" th:value="zaloguj">
+    </form>
+
+</body>
+</html>
