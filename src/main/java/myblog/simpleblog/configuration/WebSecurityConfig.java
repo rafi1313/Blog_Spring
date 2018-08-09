@@ -18,15 +18,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private DataSource dataSource;
 
     @Autowired
-    PasswordEncoder passwordEncoderConfig;
+    private PasswordEncoder bCryptPasswordEncoder;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 //które z podstron wymagają autoryzacji
-                .antMatchers("/contact")
+//                .antMatchers("/contact")
                 //jakich wymagają uprawnień
-                .hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
+//                .hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                 .antMatchers("/changePassword")
                 .hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                 .anyRequest().permitAll()
@@ -42,18 +42,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
 
         auth
                 .jdbcAuthentication()
-                .usersByUsernameQuery("select u.email, u.password, u.active from user as u where u.email=?")
-                .authoritiesByUsernameQuery("select u.email, r.role_name from user as u " +
-                        "join user_role as ur on (ur.user_id=u.id) " +
-                        "join role as r on (ur.roles_id=r.id) " +
-                        "where u.email = ?")
+                .usersByUsernameQuery(  "SELECT u.email, u.password, u.active FROM user u " +
+                        "WHERE u.email = ?")
+                .authoritiesByUsernameQuery("SELECT u.email, r.role_name FROM user u " +
+                        "JOIN user_role ur ON ur.user_id = u.id " +
+                        "JOIN role r ON ur.roles_id = r.id " +
+                        "WHERE u.email = ?")
                 .dataSource(dataSource)
-                .passwordEncoder(passwordEncoderConfig);
+                .passwordEncoder(bCryptPasswordEncoder);
+//        "select u.email, r.role_name from user as u " +
+//        "join user_role as ur on (ur.user_id=u.id) " +
+//                "join role as r on (ur.roles_id=r.id) " +
+//                "where u.email = ?"
     }
 
 }
