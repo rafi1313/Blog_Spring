@@ -29,21 +29,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 //                 jakich wymagaję uprawnień
 //                .hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                 .antMatchers("/changePassword").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
+
                 .antMatchers("/post/add").hasAnyAuthority("ROLE_ADMIN")
                 .antMatchers("/post/edit").hasAnyAuthority("ROLE_ADMIN")
                 .antMatchers("/post/delete").hasAnyAuthority("ROLE_ADMIN")
 
                 .antMatchers("/post/all").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
-
+                .antMatchers("/post/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                 .anyRequest().permitAll()
                 .and()
-//                .csrf().disable()
+                .csrf().disable()
                 .formLogin()
                 .loginPage("/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .loginProcessingUrl("/login-process")
-//                .failureUrl("/error")
+                .failureUrl("/errorLogin")
                 .defaultSuccessUrl("/")
                 .and()
                 .logout()

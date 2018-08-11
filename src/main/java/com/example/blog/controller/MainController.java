@@ -29,27 +29,37 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public String home(){
-//        UserDetails principal = (UserDetails) auth.getPrincipal();
-//        System.out.println("Username: "+principal.getUsername());
+    public String home(Authentication auth, Model model){
+        if (auth != null) {
+            UserDetails principal = (UserDetails) auth.getPrincipal();
+            model.addAttribute("principal",principal);
+        }
         return "homePage";
     }
     @GetMapping("/login")
-    public String login(){
-//        System.out.println("wyswietlenie loginForm");
-
+    public String login(Authentication auth, Model model){
+        if (auth!=null){
+            UserDetails principal = (UserDetails) auth.getPrincipal();
+            model.addAttribute("principal",principal);
+        }
         return "loginForm";
     }
-//
+
 //    @GetMapping("/logout")
-//    public String logout()
+//    public String logout(){
+//        return "redirect:/";
+//    }
 
 
     @GetMapping("/contact")
-    public String contact(Model model){
+    public String contact(Model model,Authentication auth){
         // powiązanie obiektu klasy Contact
         // z obiektem contact z szablonu html
         model.addAttribute("contact",new Contact());
+        if (auth!=null){
+            UserDetails principal = (UserDetails) auth.getPrincipal();
+            model.addAttribute("principal",principal);
+        }
         return "contactForm";
     }
     @PostMapping("/contact")

@@ -1,7 +1,9 @@
 package com.example.blog.model.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Post {
@@ -14,6 +16,12 @@ public class Post {
     private String author;
     private String category;
     private Date added = new Date();
+    //relacja 1:n z punktu widzenia tabeli post
+    //FetchType.EAGER - zachłanny - utworzenie obiektu klasy Post od razu pobiera do listy relacje z Comment
+    //FetchType.LAZY - leniwy - relacje nie są automatycznie pobierane
+    //CascadeType.ALL - dopuszcza wszystkie operacje niezależnie od powiązań (DLETE, UPDATE, itp.)
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String content, String author, String category, Date added) {
         this.title = title;
@@ -21,6 +29,11 @@ public class Post {
         this.author = author;
         this.category = category;
         this.added = added;
+    }
+
+    @Override
+    public String toString() {
+        return id +";"+title+";"+content+";"+author+";"+category+";"+added;
     }
 
     public Post() {
@@ -72,5 +85,14 @@ public class Post {
 
     public void setAdded(Date added) {
         this.added = added;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Comment comment) {
+        this.comments.add(comment);
+
     }
 }

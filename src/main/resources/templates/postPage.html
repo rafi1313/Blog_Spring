@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Clean Blog - Start Bootstrap Theme</title>
+    <title>Posty</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -30,7 +30,9 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
-        <a class="navbar-brand" href="/">Start</a>
+        <a class="navbar-brand" th:if="${principal==null}" th:text="niezalogowano">Login</a>
+        <a class="navbar-brand" th:if="${principal!=null}" th:text="${principal.getUsername()}">Login</a>
+        <a class="navbar-brand" th:if="${principal!=null}" th:href="@{/logout}">Wyloguj</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
                 data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -40,6 +42,9 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
+                    <a class="nav-link" href="/">Strona domowa</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/post/all">Blog</a>
                 </li>
                 <li class="nav-item">
@@ -47,9 +52,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/contact">Kontakt</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Wyloguj</a>
                 </li>
             </ul>
         </div>
@@ -77,25 +79,42 @@
     <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
             <div th:text="${onePost.getContent()}" class="post-preview">
-                <!--<h1 class="post-title" th:text="${onePost.getTitle()}">title</h1>-->
-                <!--<p class="post-meta" th:text="'Autor: '+${onePost.getAuthor()}">author</p>-->
-                <!--<p class="post-meta" th:text="'Dodano: '+${#dates.format(onePost.getAdded(),'yyyy.MM.dd HH:mm')}">date</p>-->
-                <!--<p class="post-meta" th:text="'Kategoria: '+${onePost.getCategory()}">category</p>-->
                 Content
-                <!--<div class="clearfix" >-->
-                    <!--<a class="btn btn-primary float-right" href="#">edytuj</a>-->
-                    <!--<a class="btn btn-primary float-right" href="#">usuń</a>-->
-                <!--</div>-->
-                <!--<hr>-->
+
             </div>
-
-
-            <!-- Pager -->
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <hr>
+            <h2  th:align="center">Komentarze</h2>
+            <hr>
+            <form th:action="@{/post/}+${onePost.id}" th:object="${comment}" th:method="post">
+                <p th:align="center">Dodawanie komentarza</p>
+                <textarea class="form-control" rows="5"  th:type="text" th:field="*{message}"
+                          th:placeholder="komentarz"></textarea>
+                <span th:errors="*{message}">error</span>
+                <br>
+                <input class="btn btn-primary" id="sendMessageButton" type="submit" value="dodaj">
+            </form>
+            <hr>
+            <div th:align="center"  class="post-title" th:if="${commentList.isEmpty()}">Brak komentarzy do wyświetlenia</div>
+            <div th:each="comment:${commentList}" class="post-preview">
+                <h6 th:text="${comment.getAuthor()}">author</h6>
+                <p class="post-meta" th:text="'Dodano: '+${#dates.format(comment.getDateAdded(),'yyyy.MM.dd HH:mm')}">date</p>
+                <p th:text="${comment.getMessage()}">Message</p>
+                <div class="clearfix" >
+                    <!--<a class="btn btn-primary float-right" th:href="@{/post/editComment/}+${comment.getId}">edytuj</a>-->
+                    <a th:if="${comment.author.equals(principal.getUsername())||isAdmin}" class="btn btn-primary float-right" th:href="@{/post/deleteComment/}+${comment.id}">usuń</a>
+                </div>
+                <hr>
+            </div>
 
         </div>
     </div>
 </div>
-
 <hr>
 
 <!-- Footer -->

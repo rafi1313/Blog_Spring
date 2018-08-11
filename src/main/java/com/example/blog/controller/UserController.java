@@ -32,41 +32,55 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String register(Model model){
+    public String register(Model model, Authentication auth){
         RegisterUserForm registerUserForm = new RegisterUserForm();
         model.addAttribute("registerUserForm", registerUserForm);
+        if (auth!=null){
+            UserDetails principal = (UserDetails) auth.getPrincipal();
+            model.addAttribute("principal",principal);
+        }
         return "registerForm";
     }
     @PostMapping("/register")
-    public String register(@ModelAttribute @Valid RegisterUserForm registerUserForm, BindingResult bindingResult){
+    public String register(@ModelAttribute @Valid RegisterUserForm registerUserForm, BindingResult bindingResult,Model model, Authentication auth){
         if(bindingResult.hasErrors()) {
             return "registerForm";
         }
         // zapis przez klasę z service
         User registeredUser = userService.createUser(registerUserForm);
+        if (auth!=null){
+            UserDetails principal = (UserDetails) auth.getPrincipal();
+            model.addAttribute("principal",principal);
+        }
         return "redirect:/";
     }
     @GetMapping("/changePassword")
-    public String changePassword(Model model){
+    public String changePassword(Model model, Authentication auth){
         // utworzenie UserPasswordForm
         PasswordChangeForm passwordChangeForm = new PasswordChangeForm();
         model.addAttribute("passwordChangeForm",passwordChangeForm);
+        UserDetails principal = (UserDetails) auth.getPrincipal();
+        model.addAttribute("principal",principal);
         return "changePassword";
     }
     @PostMapping("/changePassword")
     public String changePassword(@ModelAttribute @Valid PasswordChangeForm passwordChangeForm,
                                  BindingResult bindingResult,
-                                 Authentication auth){
+                                 Authentication auth, Model model){
         if(bindingResult.hasErrors()){
             return "changePassword";
+        }
+        if (auth!=null){
+            UserDetails principal = (UserDetails) auth.getPrincipal();
+            model.addAttribute("principal",principal);
         }
         UserDetails loggedUser = (UserDetails) auth.getPrincipal();
         // zlogowano na adres currentEmail
         String currentEmail = loggedUser.getUsername();
         // zwróć użytkownika - obiekt user którego zalogowano
         User currentUser = userService.getUser(currentEmail);
-        System.out.println("aktualne: "+currentUser.getPassword());
-        System.out.println("zmienione: "+passwordChangeForm.getPassword1());
+//        System.out.println("aktualne: "+currentUser.getPassword());
+//        System.out.println("zmienione: "+passwordChangeForm.getPassword1());
         // update
         userService.changePassword(passwordChangeForm, currentUser.getId());
         return "changePassword";
